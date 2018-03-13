@@ -1,0 +1,47 @@
+PREFIX 		=/home/ruben/universidad/lse/gcc-linaro-arm-linux-gnueabihf-4.8-2013.06_linux/bin/arm-linux-gnueabihf-
+TARGET 		=/home/ruben/universidad/lse/gcc-linaro-arm-linux-gnueabihf-4.8-2013.06_linux/
+
+# compilador linaro
+CC			=$(PREFIX)gcc
+
+# linker
+LD			=$(PREFIX)ld
+
+#...
+NM			=$(PREFIX)NM
+OBJDUMP		=$(PREFIX)objdump
+
+export CC LD NM OBJDUMP		# exporta las variables
+
+# Mostrar más errores de compilación
+CFLAGS		= -Wall
+
+IFLAGS		= -I$(TARGET)/arm-linux-gnueabihf/libc/usr/include
+
+LDFLAGS		= -static \
+-L$(TARGET)/arm-linux-gnueabihf/libc/lib/arm-linux-gnueabihf \
+-L$(TARGET)/arm-linux-gnueabihf/libc/usr/lib/arm-linux-gnueabihf
+
+# incluye al compilar esas las librerias lrt y pthread
+LIBS		= -lrt -lpthread
+
+EXEC_NAME	= main
+OBJS		= main.o
+ARCHIVOS	= main.c
+
+
+all:  compilar linkado clean
+
+
+# Compila todos los .c sin linckarlos y con los flags -Wall e incluyendo las librerias con -I
+compilar:
+	$(CC) $(CFLAGS) $(IFLAGS) -c $(ARCHIVOS)
+
+# Se usa en linker sobre los compilados anteriores
+linkado: $(OBJS)
+	$(CC) -o $(EXEC_NAME) $(OBJS) $(LDFLAGS) $(LIBS)
+
+# Borra todos los archivos .o y el programa creado
+clean:
+#$(EXEC_NAME) core
+	rm -f $(OBJS)
